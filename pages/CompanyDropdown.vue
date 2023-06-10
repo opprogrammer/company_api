@@ -1,6 +1,6 @@
 <template>
 	<h1 class="font-bold text-center text-2xl mt-9 "> Add Agency</h1>
-	<div class="w-full mt-9 ml-9">
+	<div class="w-full mt-9 ml-9 flex justify-center">
 		<input
 			@click="calcDropdownWidth"
 			id="dropdownDefaultButton"
@@ -9,11 +9,11 @@
 			class="w-full max-w-lg font-medium md:text-base text-sm rounded block p-3 focus:outline-none input-box-color inline"
 			placeholder="Company name" />
 
-			<button type="button" class="ml-9 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add</button>
+			<button type="button" @click="addAgency()" class="ml-9 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add</button>
 
 		<div
 			id="dropdown"
-			class="z-10 hidden overflow-y-scroll bg-gray-200 divide-y divide-gray-100 rounded shadow-sm max-h-[300px] dark:bg-gray-800">
+			class="justify-center z-10 hidden overflow-y-scroll bg-gray-200 divide-y divide-gray-100 rounded shadow-sm max-h-[300px] dark:bg-gray-800">
 			<ul
 				v-if="companyName && companyName.length >= 2"
 				class="py-2 text-sm text-gray-700 dark:text-gray-200"
@@ -48,6 +48,8 @@
 			</ul>
 		</div>
 	</div>
+
+
 </template>
 
 <script setup>
@@ -59,6 +61,7 @@
 	const companyName = ref(null);
 	const selectedCompany = ref(null);
 	const companyArray = ref(null);
+	const details=ref([]);
 
 	onMounted(() => {
 		const $targetEl = document.getElementById("dropdown");
@@ -104,9 +107,33 @@
 	const dropdownSelect = async (event, data) => {
 		console.log(data.company_name);
 		//dropdown.value.hide();
+		details.value=data;
+		console.log("detial", details.value);
 
 		// @TODO: Do whatever with the data or just emit an event with the company name
 	};
+
+	
+
+	const { app } = useMyRealmApp();
+
+   const mongo = app.currentUser?.mongoClient("mongodb-atlas");
+   const collection = mongo?.db("company").collection("agency");
+
+   const addAgency = () => {
+    const newAgency = {
+        agencyName: details.value.company_name,
+        address: details.value.registered_office_address,
+        companyNumber: details.value.company_number,
+        companyStatus: details.value.company_status,
+	}
+    console.log('newAgency:', newAgency)
+    collection.insertOne(newAgency)
+        .then(data => {
+            console.log(data)
+            navigateTo('/dashboard')
+        })
+};
 </script>
 
 <style lang="scss" scoped></style>
