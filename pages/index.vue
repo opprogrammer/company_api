@@ -1,52 +1,84 @@
 <template>
-	<div>
-		<section class="bg-gray-50 dark:bg-gray-900 flex justify-center h-screen">
-			<div class="flex flex-col gap-6 px-6 py-8 mx-auto items-center">
-
-				<div
-					class="flex justify-center items-center h-full w-full sm:max-w-md xl:p-0">
-					<div
-						class="bg-white dark:bg-gray-800 dark:border dark:border-gray-700 rounded-lg shadow p-4 sm:p-6 w-full">
-						<h1
-							class="text-xl font-semibold leading-tight tracking-wide text-gray-900 md:text-2xl dark:text-white mb-8 text-center">
-							Please login, to continue
-						</h1>
-						<button
-							@click="googleLogin"
-							type="submit"
-							class="flex w-full items-center justify-center gap-4 text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm p-2.5 text-center">
-							<div class="bg-white md:p-2 p-1 rounded-full shadow">
-								<!-- <img src="~/public/google.png" alt="Google Logo" width="15" /> -->
+	<section class="bg-gray-50 dark:bg-gray-900">
+		<div
+			class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+			<div
+				class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+				<div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+					<h1
+						class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+						Login
+					</h1>
+					<div class="flex flex-col gap-8">
+						<div class="flex flex-col gap-4">
+							<div>
+								<label
+									for="email"
+									class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+									>Your email</label
+								>
+								<input
+									v-model="email"
+									type="email"
+									name="email"
+									id="email"
+									class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+									placeholder="name@company.com"
+									required="" />
 							</div>
-							<p class="font-semibold text-base md:text-xl mr-2">
-								Sign in with Google
-							</p>
+							<div>
+								<label
+									for="password"
+									class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+									>Password</label
+								>
+								<input
+									v-model="password"
+									type="password"
+									name="password"
+									id="password"
+									placeholder="••••••••"
+									class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+									required="" />
+							</div>
+						</div>
+
+						<button
+							@click="login()"
+							type="submit"
+							class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+							Login
 						</button>
 					</div>
 				</div>
 			</div>
-		</section>
-	</div>
+		</div>
+	</section>
 </template>
 
 <script setup>
-	const { app: realmApp, Realm } = useMyRealmApp();
+	// import { useMyRealmApp } from "~~/composables/useRealm";
+	const { app, Realm } = useMyRealmApp();
+	const email = ref(null);
+	const password = ref(null);
 
-	const googleLogin = () => {
-		const redirectURI = `${window.location.protocol}//${window.location.host}/callback`;
+	onMounted(() => {
+		console.log(app.currentUser);
+	});
 
-		const credentials = Realm.Credentials.google({
-			redirectUrl: redirectURI,
+	const login = async () => {
+		// @TODO: check if email and pass are not null
+		const credentials = Realm.Credentials.emailPassword(
+			email.value,
+			password.value
+		);
+
+		app.logIn(credentials).then((user) => {
+			console.log(user);
+			navigateTo("/dashboard");
+			
 		});
-
-		realmApp
-			.logIn(credentials)
-			.then((user) => {
-				console.log(user);
-				navigateTo("/dashboard");
-				// loading.value = false;
-			})
-			.catch((err) => console.error(err));
+		// console.assert(user.id === app.currentUser.id);
 	};
 </script>
 
