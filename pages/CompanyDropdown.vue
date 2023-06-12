@@ -118,7 +118,7 @@
 	const { app } = useMyRealmApp();
 
    const mongo = app.currentUser?.mongoClient("mongodb-atlas");
-   const collection = mongo?.db("company").collection("agency");
+   const collection = mongo?.db("payroll").collection("agencies");
 
    const addAgency = () => {
     const newAgency = {
