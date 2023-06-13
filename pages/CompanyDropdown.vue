@@ -38,7 +38,7 @@
 					<li
 						v-for="comp in companyArray"
 						:key="comp.id"
-						@click="dropdownSelect($event, comp)">
+						@click="debounce_fun($event, comp)">
 						<p
 							class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
 							{{ comp.company_name }}
@@ -104,26 +104,38 @@
 		}
 	});
 
+
+	var addressObject;
 	const dropdownSelect = async (event, data) => {
 		console.log(data.company_name);
 		//dropdown.value.hide();
 		details.value=data;
 		console.log("detial", details.value);
+	// 	addressObject = details.value.registered_office_address;
+	// 	console.log("address",addressObject);
+
+	// 	Object.keys(addressObject).forEach(function(key) {
+    // if(addressObject[key] === null || addressObject[key] === undefined ) {
+    //     addressObject[key] = '-';
+    // }
+// })
 
 		// @TODO: Do whatever with the data or just emit an event with the company name
 	};
 
-	
+	var debounce_fun = _.debounce(dropdownSelect (data), 1000);
 
 	const { app } = useMyRealmApp();
 
    const mongo = app.currentUser?.mongoClient("mongodb-atlas");
    const collection = mongo?.db("payroll").collection("agencies");
 
+  
    const addAgency = () => {
     const newAgency = {
         agencyName: details.value.company_name,
-        address: details.value.registered_office_address,
+		address: details.value.registered_office_address,
+        // address: `${addressObject?.premises}, ${addressObject?.address_line_1}, ${addressObject?.address_line_2}, ${addressObject?.locality}, ${addressObject?.postal_code}`,
         companyNumber: details.value.company_number,
         companyStatus: details.value.company_status,
 	}
