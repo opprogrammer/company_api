@@ -38,7 +38,7 @@
 					<li
 						v-for="comp in companyArray"
 						:key="comp.id"
-						@click="debounce_fun($event, comp)">
+						@click="dropdownSelect($event, comp)">
 						<p
 							class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
 							{{ comp.company_name }}
@@ -123,7 +123,6 @@
 		// @TODO: Do whatever with the data or just emit an event with the company name
 	};
 
-	var debounce_fun = _.debounce(dropdownSelect (data), 1000);
 
 	const { app } = useMyRealmApp();
 
