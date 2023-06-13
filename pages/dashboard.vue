@@ -32,9 +32,9 @@
         </h2>
         <ul class="space-y-2 font-medium">
           <li>
-            <a
-              href="/"
-              class="flex items-center p-2 text-white rounded-lg hover:bg-gray-700"
+            <router-link
+              to="/dashboard"
+              class="flex items-center p-2 bg-yellow-400 text-white rounded-lg hover:bg-gray-700"
               id="closeButton"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +47,7 @@
                   fill-rule="evenodd"
                   d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z"
                   clip-rule="evenodd"
-                ></path></svg><span class="ml-3">Dashboard</span></a
+                ></path></svg><span class="ml-3">Dashboard</span></router-link
             >
           </li>
           <li>
@@ -97,8 +97,8 @@
           </li>
           <div class="h-[1px] w-full bg-gray-600"></div>
           <li>
-            <a
-              href="/jobs"
+            <router-link
+              to="/agency"
               class="flex items-center p-2 text-white rounded-lg hover:bg-gray-700"
               id="closeButton"
               ><svg
@@ -116,7 +116,7 @@
                 <path
                   d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z"
                 ></path></svg>
-              <span class="ml-3">Jobs</span></a
+              <span class="ml-3">agencies</span></router-link
             >
           </li>
           <li>
@@ -420,7 +420,7 @@
                   <h3
                     class="mr-6 text-2xl max-xl:text-xl max-xl:mr-4 max-sm:hidden"
                   >
-                    56 Candidates
+                    Dashboard
                   </h3>
                   <button
                     id="filterDropDownBtn"
@@ -836,7 +836,7 @@
               </div>
             </header>
           
-            <div class="relative overflow-x-auto rounded-md mr-9">
+            <!-- <div class="relative overflow-x-auto rounded-md mr-9">
               <table
                 class="w-full text-md text-left text-gray-500 border-collapse dark:text-gray-400"
               >
@@ -896,7 +896,7 @@
                   
                 </tbody>
               </table>
-            </div>
+            </div> -->
             <footer class="flex items-center justify-between py-3 mt-auto mb-2">
               <div class="flex items-center gap-4">
                 <span
@@ -1078,18 +1078,18 @@ import {
     initModals();
     initTabs();
 })
-const { app } = useMyRealmApp();
-const mongo = app.currentUser?.mongoClient("mongodb-atlas");
-   const collection = mongo?.db("payroll").collection("agencies");
+// const { app } = useMyRealmApp();
+// const mongo = app.currentUser?.mongoClient("mongodb-atlas");
+//    const collection = mongo?.db("company").collection("agency");
 
-   collection
-      .find()
-      .then((data) => {
-        details.value = data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+//    collection
+//       .find()
+//       .then((data) => {
+//         details.value = data;
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
 </script>
 
 <style></style>
