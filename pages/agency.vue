@@ -837,7 +837,8 @@
               </header>
             
               <div class="relative overflow-x-auto rounded-md mr-9">
-                <table
+                <form @submit.prevent="handleEditFormSubmit">
+                <table 
                   class="w-full text-md text-left text-gray-500 border-collapse dark:text-gray-400"
                 >
                   <thead class="text-sm text-gray-800 bg-white shadow-sm">
@@ -867,35 +868,33 @@
                           >
                         </div>
                       </th>
+                      <th
+                        scope="col"
+                        class="px-3 py-3 cursor-pointer"
+                        data-draggable="true"
+                      >
+                        <div class="flex items-center gap-1 text-center">
+                          <span>Actions</span
+                          >
+                        </div>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="item in details" :key="item._id"
-                      class="text-base border-b bg-gray-50 max-xl:text-sm cursor-pointer">
-                      
-                      <td>
-                        <div class="px-3 py-4">
-                          <div class="text-black">{{ item.agencyName }}</div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="px-3 py-4">
-                          <div class="flex items-center text-gray-900">
-                            <p class="pl-3 truncate text-center">{{ item.companyNumber }}</p>
-                          </div>
-                        </div>
-                      </td>
-                      
-                      <td>
-                        <div class="px-3 py-4">
-                          <div class="text-black ">{{ item.companyStatus }}</div>
-                        </div>
-                      </td>
-  
-                    </tr>
+                    <template v-for="contact in details" :key="contact._id">
+              <template v-if="editContactId === contact._id">
+                <EditableRow_agency :editFormData="editFormData" :handleEditFormChange="handleEditFormChange"
+                  :handleCancelClick="handleCancelClick" />
+              </template>
+              <template v-else>
+                <ReadOnlyRow_agency :contact="contact" :handleEditClick="handleEditClick"
+                  :handleDeleteClick="handleDeleteClick" />
+              </template>
+            </template>
                     
                   </tbody>
                 </table>
+                </form>
               </div>
               <footer class="flex items-center justify-between py-3 mt-auto mb-2">
                 <div class="flex items-center gap-4">
@@ -1082,19 +1081,124 @@
 
   const { app } = useMyRealmApp();
 
-  onBeforeMount(()=>{
-  const mongo = app.currentUser?.mongoClient("mongodb-atlas");
-     const collection = mongo?.db("company").collection("agency");
   
-     collection
-        .find()
-        .then((data) => {
-          details.value = data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      })
+  const mongo = app.currentUser?.mongoClient("mongodb-atlas");
+  const collection = mongo?.db("company").collection("agency");
+  
+  const editFormData = ref({
+  agencyname: "",
+  agencynumber: "",
+  agencystatus: ""
+})
+const editContactId = ref(null)
+const handleEditFormChange = (event) => {
+  event.preventDefault();
+  const fieldName = event.target.getAttribute("name");
+  const fieldValue = event.target.value;
+  const newFormData = { ...editFormData._rawValue };
+  newFormData[fieldName] = fieldValue;
+  editFormData.value = newFormData
+};
+
+const handleEditFormSubmit = () => {
+  // event.preventDefault();
+  const editedContact = {
+    agencyName: editFormData.value.agencyname,
+    companyNumber: editFormData.value.agencynumber,
+    companyStatus: editFormData.value.agencystatus,
+  };
+  console.log('details',editContactId.value);
+  
+  collection
+		.updateOne({ _id: editContactId.value }, { $set: editedContact })
+		.then((data) => {
+			console.log(data);
+      consoleData();
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+  
+  // console.log(editedContact)
+  // const newContacts = [...contacts.value];
+  // const index = contacts.value.findIndex((contact) => contact._id === editContactId.value);
+  // console.log('index', index)
+  // newContacts[index] = editedContact;
+  // console.log('newContacts', newContacts)
+  // contacts.value = newContacts
+  editContactId.value = null;
+};
+const handleEditClick = (contact) => {
+  console.log('contact',contact)
+  editContactId.value = contact._id;
+  const formValues = {
+    id:contact._id,
+    agencyname: contact.agencyName,
+    agencynumber: contact.companyNumber,
+    agencystatus:contact.companyStatus,
+  };
+  editFormData.value = formValues;
+};
+const handleCancelClick = () => {
+  // setEditContactId(null);
+  editContactId.value = null
+};
+const handleDeleteClick = (id) => {
+  // const index = contacts.findIndex(contact => contact._id === contactId)
+  // const index = contacts.value.findIndex((contact) => contact._id === contactId);
+  // contacts.value.splice(index, 1);
+ 
+console.log(id)
+  collection
+		.deleteOne({
+      _id:id,
+    })
+		.then((data) => {
+			console.log(data);
+      consoleData();
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};
+
+const consoleData = () =>{
+  collection
+		.find()
+		.then((data) => {
+			console.log(data);
+            details.value=data;
+
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+}
+
+onBeforeMount(()=>{
+
+ const consoleData1 = () =>{
+  collection
+		.find()
+		.then((data) => {
+			console.log(data);
+            details.value=data;
+
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+}
+
+consoleData1();
+
+});
+
+
+      
+
+
+
   </script>
   
   <style></style>
