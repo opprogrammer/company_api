@@ -1164,7 +1164,7 @@ console.log(id)
 
 const consoleData = () =>{
   collection
-		.find()
+		.find({},{limit:10})
 		.then((data) => {
 			console.log(data);
             details.value=data;
@@ -1179,7 +1179,7 @@ onBeforeMount(()=>{
 
  const consoleData1 = () =>{
   collection
-		.find()
+		.find({},{limit:10})
 		.then((data) => {
 			console.log(data);
             details.value=data;
